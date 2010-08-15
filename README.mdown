@@ -1,0 +1,42 @@
+# Owned
+
+Owned is a CakePHP plugin that gives models of your choice ownership 
+awareness.
+
+## Usage
+
+You can either install it as a plugin in your App, or just take the behavior
+file and put in your APP/models/behaviors folder.
+
+### Configuration options
+
+You can set various configuration options in the config array:
+
+- The owner model to use;
+- The user model;
+- The user model's primary key (needed if you change the user model);
+- The access mode ('crud' or 'owner');
+- How to deal with users trying to access objects that are not theirs ('quiet', 'error').
+
+### Adding the behavior to a model (plugin)
+
+To add the behavior to a model add it to the $actsAs array in your model:
+
+		$actsAs = array('Owned.Owned');
+
+Or set some config options (shorthand mode sets access mode):
+
+		$actsAs = array(
+			'Owned.Owned' => 'owner'
+		);
+
+or using an extended array for more options:
+
+		$actsAs = array(
+			'Owned.Owned' => array(
+				'userModel' => 'Member',
+				'userPrimaryKey => 'member_id',
+				'returnMode' => 'error',
+			)
+		);
+		
