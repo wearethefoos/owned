@@ -8,6 +8,10 @@ awareness.
 You can either install it as a plugin in your App, or just take the behavior
 file and put in your APP/models/behaviors folder.
 
+### Set up the ownership table
+
+Run the sql in the plugin's config/sql folder.
+
 ### Configuration options
 
 You can set various configuration options in the config array:

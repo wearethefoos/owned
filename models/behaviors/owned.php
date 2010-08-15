@@ -102,7 +102,7 @@
 	 * @access protected
 	 */		
 		var $_defaults = array(
-			'ownerModel' => 'Owned.owner',
+			'ownerModel' => 'Owned.Ownership',
 			'userModel'  => 'User',
 			'userPrimaryKey' => 'user_id',
 			'mode' => 'crud',
