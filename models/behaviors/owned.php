@@ -125,7 +125,7 @@
 			if (!is_array($config)) {
 	            $config = array('mode' => $config);
 	        }
-			if (isset($config['mode']) {
+			if (isset($config['mode'])) {
 				$config['mode'] = ($config['mode'] == 'owner') ? 'owner' : 'crud';
 			}
 			$this->errorText = __('You are not allowed to access this object.', true);
@@ -140,6 +140,20 @@
 			$this->_User = ($user) ? $user : $Session->read('Auth.User.id');
 			$this->_Model = $Model;
 		}
+		
+		function makeWritable($id=null, $user=null) {
+			if ($id) { // user could be null
+				$data = array(
+					$this->settings[$Model->alias]['ownerModel'] => array(
+						'model' => $this->_Model->alias,
+						$this->settings[$this->_Model->alias]['userPrimaryKey'] => $user,
+						'foreign_key' => $id,
+						'r' => 1,
+					));
+				return $this->_ownerModel->save($data);
+			}
+		}
+		
 	
 		function _mine($id=null, $user=null) {
 			$user = ($user) ? $user : $this->_User;
@@ -150,9 +164,9 @@
 			if ($user && $id) {
 				$check = $this->_ownerModel->find('count', array(
 					'conditions' => array(
-						$this->settings[$Model->alias]['ownerModel'].'.model' => $this->name,
-						$this->settings[$Model->alias]['ownerModel'].'.'.$this->settings[$Model->alias]['userPrimaryKey'] => $user,
-						$this->settings[$Model->alias]['ownerModel'].'.id' => $id,
+						$this->settings[$Model->alias]['ownerModel'].'.model' => $this->_Model->alias,
+						$this->settings[$Model->alias]['ownerModel'].'.'.$this->settings[$this->_Model->alias]['userPrimaryKey'] => $user,
+						$this->settings[$Model->alias]['ownerModel'].'.foreign_key' => $id,
 					)	
 				));
 				return (count($check) >= 1);
@@ -166,9 +180,9 @@
 			if ($user) {
 				$check = $_ownerModel->find('count', array(
 					'conditions' => array(
-						$this->settings[$this->_Model->alias]['ownerModel'].'.model' => $this->name,
-						$this->settings[$this->_Model->alias]['ownerModel'].'.'.$this->settings[$Model->alias]['userPrimaryKey'] => $user,
-						$this->settings[$this->_Model->alias]['ownerModel'].'.id' => $id,
+						$this->settings[$this->_Model->alias]['ownerModel'].'.model' => $this->_Model->alias,
+						$this->settings[$this->_Model->alias]['ownerModel'].'.'.$this->settings[$this->_Model->alias]['userPrimaryKey'] => $user,
+						$this->settings[$this->_Model->alias]['ownerModel'].'.foreign_key' => $id,
 						$this->settings[$this->_Model->alias]['ownerModel'].'.c >=' => $min_access[0],
 						$this->settings[$this->_Model->alias]['ownerModel'].'.r >=' => $min_access[1],
 						$this->settings[$this->_Model->alias]['ownerModel'].'.u >=' => $min_access[2],
