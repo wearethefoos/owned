@@ -141,17 +141,52 @@
 			$this->_Model = $Model;
 		}
 		
+		function makeCreatable($id=null, $user=null) {
+			if ($id) { // user could be null
+				$this->_getData($id, $user);
+				$data[$this->settings[$Model->alias]['ownerModel']]['c'] = 1; 
+				return $this->_ownerModel->save($data);
+			}
+		}
+		function makeReadable($id=null, $user=null) {
+			if ($id) { // user could be null
+				$this->_getData($id, $user);
+				$data[$this->settings[$Model->alias]['ownerModel']]['r'] = 1; 
+				return $this->_ownerModel->save($data);
+			}
+		}
 		function makeWritable($id=null, $user=null) {
 			if ($id) { // user could be null
+				$this->_getData($id, $user);
+				$data[$this->settings[$Model->alias]['ownerModel']]['u'] = 1; 
+				return $this->_ownerModel->save($data);
+			}
+		}
+		function makeDeletable($id=null, $user=null) {
+			if ($id) { // user could be null
+				$this->_getData($id, $user);
+				$data[$this->settings[$Model->alias]['ownerModel']]['d'] = 1; 
+				return $this->_ownerModel->save($data);
+			}
+		}		
+		function _getData($id=null, $user=null) {
+			$data = $this->_ownerModel->find('all', array(
+				'conditions' => array(
+					$this->settings[$Model->alias]['ownerModel'].'.model' => $this->_Model->alias,
+					$this->settings[$Model->alias]['ownerModel'].'.'.$this->settings[$this->_Model->alias]['userPrimaryKey'] => $user,
+					$this->settings[$Model->alias]['ownerModel'].'.foreign_key' => $id,
+				)
+			));
+			if (!$data) {
+				$this->_ownerModel->create();
 				$data = array(
 					$this->settings[$Model->alias]['ownerModel'] => array(
 						'model' => $this->_Model->alias,
 						$this->settings[$this->_Model->alias]['userPrimaryKey'] => $user,
 						'foreign_key' => $id,
-						'r' => 1,
 					));
-				return $this->_ownerModel->save($data);
 			}
+			return $data;
 		}
 		
 	
